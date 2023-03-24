@@ -4,27 +4,29 @@ import { InputWithLabel } from './InputWithLabel'
 
 type SearchParams = {
     searchTerm: string,
-    handleSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void,
+    onSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void,
     onSearchInput: (event: React.ChangeEvent<HTMLInputElement>) => void,
     buttonClass: string
   }
   
-  export const SearchForm: React.FC<SearchParams> = ({
+  const SearchForm: React.FC<SearchParams> = ({
     searchTerm,
-    handleSearchSubmit,
+    onSearchSubmit,
     onSearchInput,
     buttonClass,
   }: SearchParams) => (
-    <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
+    <form onSubmit={onSearchSubmit} className={styles.searchForm}>
       <InputWithLabel
         id='search'
         onInputChange={onSearchInput}
         isFocused
         value={searchTerm}> 
-        Search:
+        <strong>Search:</strong>
       </InputWithLabel>
       <button type="submit" disabled={!searchTerm} className={`${styles.button} ${buttonClass}`}>
           Submit
       </button>
     </form>
   )
+
+  export { SearchForm }

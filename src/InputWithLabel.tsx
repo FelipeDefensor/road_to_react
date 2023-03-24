@@ -19,12 +19,10 @@ export const InputWithLabel: React.FC<InputWithLabelProps> = ({
    children
   }) => {
 
-  console.log('Loading Search...')
   return (
     <div>
-      <label htmlFor={id} className={styles.label}>
-        {children}
-        </label>
+      <label htmlFor={id} className={styles.label}>{children}</label>
+      &nbsp;
       <input
         type={type}
         id={id}
@@ -33,7 +31,6 @@ export const InputWithLabel: React.FC<InputWithLabelProps> = ({
         onChange={onInputChange}
         className={styles.input}
       />
-      <span>{value}</span>
     </div>
   )
 }

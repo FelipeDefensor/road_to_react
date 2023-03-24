@@ -1,0 +1,21 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`InputWithLabel > matches snapshot 1`] = `
+<div>
+  <label
+    class="_label_6dc87e"
+    for="test"
+  >
+    <p>
+      Dummy child
+    </p>
+  </label>
+   
+  <input
+    class="_input_6dc87e"
+    id="test"
+    type="text"
+    value="initial"
+  />
+</div>
+`;

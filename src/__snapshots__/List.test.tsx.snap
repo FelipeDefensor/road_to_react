@@ -1,0 +1,175 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Item > matches snapshot 1`] = `
+<li
+  class="_item_6dc87e"
+>
+  <span
+    style="width: 40%;"
+  >
+    <a
+      href="https://reactjs.org/"
+    >
+      React
+    </a>
+  </span>
+  <span
+    style="width: 30%;"
+  >
+    Author: 
+    Jordan Walke
+  </span>
+  <span
+    style="width: 10%;"
+  >
+    Comments: 
+    3
+  </span>
+  <span
+    style="width: 10%;"
+  >
+    Points: 
+    4
+  </span>
+  <span
+    style="width: 10%;"
+  >
+    <button
+      class="_button_6dc87e _buttonSmall_6dc87e"
+    >
+      Dismiss
+    </button>
+  </span>
+</li>
+`;
+
+exports[`List > matches snapshot 1`] = `
+<ul>
+  <li
+    style="display: flex;"
+  >
+    <span
+      style="width: 40%;"
+    >
+      <button
+        class="_sortHeader_6dc87e"
+      >
+        Title
+      </button>
+    </span>
+    <span
+      style="width: 30%;"
+    >
+      <button
+        class="_sortHeader_6dc87e"
+      >
+        Author
+      </button>
+    </span>
+    <span
+      style="width: 10%;"
+    >
+      <button
+        class="_sortHeader_6dc87e"
+      >
+        Comments
+      </button>
+    </span>
+    <span
+      style="width: 10%;"
+    >
+      <button
+        class="_sortHeader_6dc87e"
+      >
+        Points
+      </button>
+    </span>
+    <span
+      class="_sortHeader_6dc87e"
+      style="width: 10%;"
+    >
+      Actions
+    </span>
+  </li>
+  <li
+    class="_item_6dc87e"
+  >
+    <span
+      style="width: 40%;"
+    >
+      <a
+        href="https://reactjs.org/"
+      >
+        React
+      </a>
+    </span>
+    <span
+      style="width: 30%;"
+    >
+      Author: 
+      Jordan Walke
+    </span>
+    <span
+      style="width: 10%;"
+    >
+      Comments: 
+      3
+    </span>
+    <span
+      style="width: 10%;"
+    >
+      Points: 
+      4
+    </span>
+    <span
+      style="width: 10%;"
+    >
+      <button
+        class="_button_6dc87e _buttonSmall_6dc87e"
+      >
+        Dismiss
+      </button>
+    </span>
+  </li>
+  <li
+    class="_item_6dc87e"
+  >
+    <span
+      style="width: 40%;"
+    >
+      <a
+        href="https://redux.js.org/"
+      >
+        Redux
+      </a>
+    </span>
+    <span
+      style="width: 30%;"
+    >
+      Author: 
+      Dan Abramov, Andre Clark
+    </span>
+    <span
+      style="width: 10%;"
+    >
+      Comments: 
+      2
+    </span>
+    <span
+      style="width: 10%;"
+    >
+      Points: 
+      5
+    </span>
+    <span
+      style="width: 10%;"
+    >
+      <button
+        class="_button_6dc87e _buttonSmall_6dc87e"
+      >
+        Dismiss
+      </button>
+    </span>
+  </li>
+</ul>
+`;

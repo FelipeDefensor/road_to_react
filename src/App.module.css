@@ -63,6 +63,22 @@ body {
     padding: 10px;
   }
 
+  .sortHeader {
+    font-size: 20px;
+    font-weight: 300;
+    background: transparent;
+    border: 0px solid #171212;
+    cursor: pointer;
+    margin: 0 0 10px 0;
+  
+    transition: all 0.1s ease-in;
+  }
+
+  .sortHeader:hover {
+    background: #171212;
+    color: #ffffff;
+  }
+
   .searchForm {
     padding: 10px 0 20px 0;
     display: flex;

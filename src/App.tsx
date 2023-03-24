@@ -5,13 +5,13 @@ import styles from "./App.module.css"
 import { List } from "./List"
 import { SearchForm } from "./SearchForm"
 
-const title: string = "My First React App"
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query='
 
 export enum Action {
   STORIES_FETCH_INIT,
   STORIES_FETCH_SUCCESS,
   STORIES_FETCH_FAILURE,
+  LOAD_PREVIOUS_STORIES,
   REMOVE_STORY
 }
 
@@ -29,78 +29,110 @@ export type ReducerAction = {
   payload?: any
 }
 
-const App = () => {
-  console.log('Loading App...')
+type StoryState = {
+  data: Story[]
+  isError: boolean
+  isLoading: boolean
+}
 
-  const useStorageState = (
-    key: string,
-    initialState: string
-    ): [string, (newValue: string) => void] => {
-    const [value, setValue] = React.useState(
-      localStorage.getItem(key) || initialState
-    )
-
-    React.useEffect(() => {localStorage.setItem(key, value)}, [value, key])
-
-    return [value, setValue]
-  }
-
-  const [searchTerm, setSearchTerm] = useStorageState('search', '')
-  const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`)
-
-  function handleSearchSubmit (event: React.FormEvent<HTMLFormElement>) {
-    setUrl(`${API_ENDPOINT}${searchTerm}`)
-
-    event.preventDefault()
-  }
-
-  function handleSearchInput (event: React.ChangeEvent<HTMLInputElement>) {
-      setSearchTerm(event.target.value)
-  }
-  
-  type storyState = {
-    data: Story[]
-    isError: boolean
-    isLoading: boolean
-  }
-
-  const storiesReducer = (state:storyState, action: ReducerAction) => {
-    switch (action.type) {
-      case Action.STORIES_FETCH_INIT:
-        return {
-          ...state,
-          isLoading: true,
-          isError: false
-        }
-      case Action.STORIES_FETCH_SUCCESS:
+const storiesReducer = (state:StoryState, action: ReducerAction) => {
+  switch (action.type) {
+    case Action.STORIES_FETCH_INIT:
+      return {
+        ...state,
+        isLoading: true,
+        isError: false
+      }
+    case Action.STORIES_FETCH_SUCCESS:
+      return {
+        ...state,
+        data: action.payload,
+        isLoading: false,
+        isError: false
+      }
+    case Action.LOAD_PREVIOUS_STORIES:
+        console.log(action)
         return {
           ...state,
           data: action.payload,
           isLoading: false,
           isError: false
+      }
+    case Action.STORIES_FETCH_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        isError: true
+      }
+    case Action.REMOVE_STORY:
+      return {
+        ...state,
+        data: state.data.filter((story) => story.objectID !== action.payload.objectID),
+        isLoading: false,
+        isError: false
         }
-      case Action.STORIES_FETCH_FAILURE:
-        return {
-          ...state,
-          isLoading: false,
-          isError: true
-        }
-      case Action.REMOVE_STORY:
-        return {
-          ...state,
-          data: state.data.filter((story) => story.objectID !== action.payload),
-          isLoading: false,
-          isError: false
-          }
-      default:
-        throw new Error('Unrecognized action.')
-    }
+    default:
+      throw new Error('Unrecognized action.')
+  }
+}
+
+const getSumComments = (stories: Story[]) => {
+  return stories.reduce((result, value) => result + value.num_comments, 0
+  )
+}
+
+const App = () => {
+  const useStorageState = (
+    key: string,
+    initialState: string
+    ): [string, (newValue: string) => void] => {
+    const isMounted = React.useRef(false)
+
+    console.log('------')
+    console.log('Rendering App')
+
+    const [value, setValue] = React.useState(
+      localStorage.getItem(key) || initialState
+    )
+
+    React.useEffect(() => {
+      if (!isMounted.current) {
+        isMounted.current = true
+      } else {
+        localStorage.setItem(key, value)
+      }
+    }, [value, key])
+
+    return [value, setValue]
   }
 
+  type PreviousSearch = {
+    term: string,
+    result: StoryState
+  }
+
+  const [searchTerm, setSearchTerm] = useStorageState('search', 'React')
+  const [lastSearches, setLastSearchTerms] = React.useState<PreviousSearch[]>([])
+  const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`)
   const [stories, dispatchStories] = React.useReducer(
     storiesReducer,
     { data: [], isLoading: false, isError: false}
   )
+
+  function handleSearchSubmit (event: React.FormEvent<HTMLFormElement>) {
+    setUrl(`${API_ENDPOINT}${searchTerm}`)
+
+    console.log(`searchTerm=${ searchTerm }`)
+
+    event.preventDefault()
+    
+  }
+
+  function handleSearchInput (event: React.ChangeEvent<HTMLInputElement>) {
+    console.log(event)
+    setSearchTerm(event.target.value)
+  }
+  
 
   const handleFetchStories = React.useCallback(async () => {
     dispatchStories({ type: Action.STORIES_FETCH_INIT})
@@ -112,23 +144,51 @@ const App = () => {
           type: Action.STORIES_FETCH_SUCCESS,
           payload: result.data.hits
       })
+
+      const newSearchTerms = [...lastSearches]
+      newSearchTerms.unshift({
+        term: searchTerm,
+        result: result.data.hits
+      })
+
+      if (newSearchTerms.length === 6) {
+        newSearchTerms.pop()
+      }
+
+      setLastSearchTerms(newSearchTerms)
+      console.log(lastSearches)
+
+
     } catch {
       dispatchStories ({ type: Action.STORIES_FETCH_FAILURE})
     }}, [url])
     
   React.useEffect(() => { handleFetchStories() }, [handleFetchStories])
 
+  function onLoadPreviousSearch (term, result) {
+    setSearchTerm(term)
+    dispatchStories({
+      type: Action.LOAD_PREVIOUS_STORIES,
+      payload: result
+    })
+  }
+
+  const PreviousSearchButton = ({ term, result }) => {
+    return <button onClick={() => onLoadPreviousSearch(term, result)}>{term}</button>
+  }
+
   return (
     <div className={styles.container}>
-      <h1 className={styles.headlinePrimary}>My Hacker Stories</h1>
+      <h1 className={styles.headlinePrimary}>My Hacker Stories with {getSumComments(stories.data)} comments.</h1>
       {stories.isLoading ? <p>Loading...</p> : ''}
       {stories.isError ? <p>ERROR LOADING DATA</p> : ''}
       <SearchForm
-       searchTerm={searchTerm}
-       handleSearchSubmit={handleSearchSubmit}
-       onSearchInput={handleSearchInput}
-       buttonClass={styles.buttonLarge}
+        searchTerm={searchTerm}
+        onSearchSubmit={handleSearchSubmit}
+        onSearchInput={handleSearchInput}
+        buttonClass={styles.buttonLarge}
       />
+      {lastSearches.map(PreviousSearchButton)}
       <List list={stories.data} dispatchStories={dispatchStories}/> 
     </div>
   )
@@ -137,5 +197,7 @@ const App = () => {
 
 
 export default App
+
+export { storiesReducer }
 
 
